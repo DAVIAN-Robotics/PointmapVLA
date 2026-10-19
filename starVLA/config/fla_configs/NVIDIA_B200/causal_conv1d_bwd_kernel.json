@@ -1,0 +1,12 @@
+{
+  "kernel_name": "causal_conv1d_bwd_kernel",
+  "default_config": {
+    "kwargs": {
+      "BD": 16
+    },
+    "num_warps": 4,
+    "num_stages": 3,
+    "num_ctas": 1,
+    "maxnreg": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kernel_name": "kda_gate_bwd_kernel",
+  "default_config": {
+    "kwargs": {},
+    "num_warps": 4,
+    "num_stages": 2,
+    "num_ctas": 1,
+    "maxnreg": null
+  }
+}

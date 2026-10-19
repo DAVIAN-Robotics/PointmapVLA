@@ -1,0 +1,28 @@
+PointmapVLA
+===========
+
+This repository contains code from, or derived from, the following projects.
+
+starVLA (https://github.com/starVLA/starVLA) — MIT License, Copyright (c)
+StarVLA Team. PointmapVLA keeps starVLA's layout; see UPSTREAM.md and LICENSE.
+
+Hugging Face Transformers (https://github.com/huggingface/transformers) —
+Apache License 2.0. starVLA/model/modules/vlm/qwen3_5/modeling_qwen3_5_pointmap.py
+contains a copy of the Qwen3.5 vision-model forward pass from transformers
+5.3.0 with a single addition for pointmap features.
+
+NVIDIA Isaac GR00T (https://github.com/NVIDIA/Isaac-GR00T) — Apache License
+2.0. The LeRobot dataset loader under starVLA/dataloader/gr00t_lerobot/ is
+derived from it, via starVLA.
+
+Simulator dependencies are distributed as separately pinned repositories, each
+with its own license and NOTICE:
+  https://github.com/DAVIAN-Robotics/robosuite        (MIT, ARISE Initiative)
+  https://github.com/DAVIAN-Robotics/robocasa-kitchen (MIT, RoboCasa Team;
+                                                      RLDX-1 changes Apache-2.0)
+  https://github.com/DAVIAN-Robotics/LIBERO           (MIT)
+  https://github.com/DAVIAN-Robotics/LIBERO-plus      (no upstream license; see
+                                                      its NOTICE)
+
+Model weights are derived from Qwen3.5-4B (Qwen Team), distributed under the
+Apache License 2.0.

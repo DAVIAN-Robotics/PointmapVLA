@@ -1,0 +1,13 @@
+{
+  "kernel_name": "attnres_bwd_kernel_dqdw",
+  "default_config": {
+    "kwargs": {
+      "BN": 1024,
+      "BD": 16
+    },
+    "num_warps": 4,
+    "num_stages": 3,
+    "num_ctas": 1,
+    "maxnreg": null
+  }
+}

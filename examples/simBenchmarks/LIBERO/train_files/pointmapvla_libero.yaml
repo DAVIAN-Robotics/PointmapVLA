@@ -1,0 +1,96 @@
+# PointmapVLA fine-tuning on LIBERO (spatial, object, goal, 10).
+# Recipe of the released LIBERO checkpoint: 4 GPUs x 32 samples = global batch
+# 128, 30k optimizer steps. Launch with starVLA/config/deepseeds/deepspeed_zero2.yaml
+# (ZeRO-2, bf16, gradient clipping 1.0); see docs/training.md.
+
+run_id: pointmapvla_libero
+run_root_dir: ./results/runs
+seed: 42
+wandb_entity: null
+wandb_project: pointmapvla
+is_debug: false
+version_id: "0.21"
+
+framework:
+  name: PointmapVLA
+  qwenvl:
+    # Relative paths resolve against the run dir of `trainer.pretrained_checkpoint`;
+    # the trainer copies that `base_vlm/` (config, tokenizer, processor) into this run.
+    base_vlm: ./base_vlm
+    attn_implementation: flash_attention_2
+    # No `enable_thinking` key: the LIBERO checkpoint was trained with the chat
+    # template default (`<think>\n`). Keep it that way for this benchmark.
+  pointmap:
+    frame: base            # pointmaps are expressed in the robot-base frame
+  action_model:
+    action_dim: 10         # eef pos 3 | eef rot (r6) 6 | gripper 1
+    state_dim: 11          # eef pos 3 | eef rot (r6) 6 | gripper 2
+    action_horizon: 8
+    repeated_diffusion_steps: 8
+    num_inference_timesteps: 4
+    add_pos_embed: true
+    max_seq_len: 1024
+    noise_beta_alpha: 1.5
+    noise_beta_beta: 1.0
+    noise_s: 0.999
+    num_timestep_buckets: 1000
+    diffusion_model_cfg:
+      action_dit_hidden_dim: 1024
+      attention_head_dim: 64
+      dropout: 0.2
+      final_dropout: true
+      interleave_self_attention: true
+      norm_type: ada_norm
+      positional_embeddings: null
+
+datasets:
+  vla_data:
+    dataset_py: lerobot_datasets
+    lerobot_version: v3.0
+    data_root_dir: playground/Datasets/libero_r6
+    data_mix: libero_r6_pointmap
+    pointmap_data_root: playground/Datasets/libero_r6_pointmap
+    pointmap_out_hw: [256, 256]       # must match the RGB patch grid (256 -> 8x8 merged tokens per view)
+    include_state: true
+    obs_image_size: [224, 224]
+    per_device_batch_size: 32
+    num_workers: 8
+    prefetch_factor: 6
+    video_backend: pyav
+    delete_pause_frame: false
+    collate_vlm_inputs: true          # Qwen-VL preprocessing runs in the dataloader workers
+    collate_pointmap: true
+    CoT_prompt: 'Task: {instruction} Mode: <end_effector>'
+    instruction_normalize: true
+    pointmap_origin_tag: ' Pointmap_origin: <robot>'
+
+trainer:
+  # Local run dir, weight file, or Hugging Face repo id. The action-head input/output
+  # projections are remapped automatically when the pretrained dims differ (32/17 -> 10/11).
+  pretrained_checkpoint: DAVIAN-Robotics/PointmapVLA-Pretrained
+  is_resume: true                    # re-launching into the same run dir continues from the latest checkpoint
+  max_train_steps: 30000             # optimizer updates (independent of gradient accumulation)
+  num_warmup_steps: 1500
+  lr_scheduler_type: cosine_with_min_lr
+  scheduler_specific_kwargs:
+    min_lr: 1.0e-06
+  learning_rate:
+    base: 1.0e-04                    # everything not listed below (the VLM-to-DiT projection layers)
+    qwen_vl_interface: 1.0e-05
+    action_model: 1.0e-04
+    pointmap_encoder: 1.0e-05
+  optimizer:
+    name: AdamW
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
+    weight_decay: 1.0e-05
+  gradient_accumulation_steps: 1     # must equal the DeepSpeed json (checked at start-up)
+  gradient_clipping: 1.0             # DeepSpeed clips via its json; this value is used only without DeepSpeed
+  freeze_modules: ''
+  logging_frequency: 5
+  eval_interval: 1000000
+  save_interval: 5000
+  save_format: safetensors           # checkpoints/steps_<N>_model.safetensors (or `pt`)
+  save_full_state: true              # also write checkpoints/resume_<N>/ (optimizer + RNG) for exact resume
+  full_state_interval: 2000
+  resume_keep: 1

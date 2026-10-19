@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use PointmapVLA, please cite the paper below."
+title: "PointmapVLA: Scaling Robot Learning with Robot-Centric Pointmaps"
+type: software
+# Author names are withheld while the paper is under double-blind review and
+# will be added at camera-ready.
+authors:
+  - name: "PointmapVLA authors"
+repository-code: "https://github.com/DAVIAN-Robotics/PointmapVLA"
+license: MIT
+preferred-citation:
+  type: article
+  title: "PointmapVLA: Scaling Robot Learning with Robot-Centric Pointmaps"
+  authors:
+    - name: "PointmapVLA authors"
+  year: 2026
+  notes: "Under review."

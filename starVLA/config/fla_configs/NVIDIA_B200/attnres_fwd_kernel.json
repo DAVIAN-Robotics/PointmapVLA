@@ -1,0 +1,12 @@
+{
+  "kernel_name": "attnres_fwd_kernel",
+  "default_config": {
+    "kwargs": {
+      "BL": 1
+    },
+    "num_warps": 4,
+    "num_stages": 2,
+    "num_ctas": 1,
+    "maxnreg": null
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "kernel_name": "chunk_gla_bwd_kernel_inter",
+  "default_config": {
+    "kwargs": {
+      "BK": 32,
+      "BV": 64
+    },
+    "num_warps": 2,
+    "num_stages": 2,
+    "num_ctas": 1,
+    "maxnreg": null
+  }
+}

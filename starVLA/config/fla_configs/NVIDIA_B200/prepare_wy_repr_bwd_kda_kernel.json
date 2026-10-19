@@ -1,0 +1,10 @@
+{
+  "kernel_name": "prepare_wy_repr_bwd_kda_kernel",
+  "default_config": {
+    "kwargs": {},
+    "num_warps": 2,
+    "num_stages": 2,
+    "num_ctas": 1,
+    "maxnreg": null
+  }
+}

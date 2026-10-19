@@ -1,0 +1,12 @@
+{
+  "kernel_name": "chunk_local_cumsum_vector_kernel",
+  "default_config": {
+    "kwargs": {
+      "BS": 32
+    },
+    "num_warps": 2,
+    "num_stages": 3,
+    "num_ctas": 1,
+    "maxnreg": null
+  }
+}
